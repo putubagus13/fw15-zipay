@@ -23,7 +23,7 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>ZIPay | Home</title>
+                <title>Welcome to ZIPay</title>
             </Head>
             <div className="w-full">
                 <div className="flex overflow-hidden pb-96 w-full">
