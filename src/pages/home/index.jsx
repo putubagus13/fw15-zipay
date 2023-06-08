@@ -6,6 +6,7 @@ import Icon from "../../assets/pexels-pixabay-220453.jpg";
 import {MdNotificationsNone, MdOutlineLogout} from "react-icons/md";
 import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser, AiOutlineArrowDown} from "react-icons/ai";
+import {FiMenu} from "react-icons/fi";
 import Link from "next/link";
 
 function Homepage() {
@@ -16,7 +17,7 @@ function Homepage() {
             </Head>
             <header className="flex justify-between items-center px-[8%] py-6 bg-white rounded-b-3xl shadow-lg">
                 <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
-                <div className="flex justify-center items-center gap-3">
+                <div className="hidden lg:flex justify-center items-center gap-3">
                     <Link href="/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
                         <Image className="object-cover" src={Icon} alt=""/>
                     </Link>
@@ -25,6 +26,9 @@ function Homepage() {
                         <p>+62081234567</p>
                     </div>
                     <MdNotificationsNone className="text-accent hover:text-primary" size={30}/>
+                </div>
+                <div className="flex justify-end items-center lg:hidden">
+                    <button type="button"><FiMenu className="flex items-center text-primary" size={35} /></button>
                 </div>
             </header>
             <div className="flex gap-6 px-[6%] py-16">
@@ -191,9 +195,9 @@ function Homepage() {
                     </div>
                 </div>
             </div>
-            <footer className="flex justify-between bg-secondary px-[8%] py-6">
+            <footer className="flex flex-col md:flex-row gap-6 justify-between bg-secondary px-[8%] py-6">
                 <label className="font-[500] text-white">2020 ZIPay. All right reserved.</label>
-                <div className="flex justify-between items-center font-[500] text-white gap-6">
+                <div className="flex flex-col md:flex-row justify-between md:items-center font-[500] text-white md:gap-6">
                     <label>+62 5637 8882 9901</label>
                     <label>contact@zipay.com</label>
                 </div>
