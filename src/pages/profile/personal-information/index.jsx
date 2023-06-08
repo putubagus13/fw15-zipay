@@ -2,21 +2,20 @@ import React from "react";
 import Head from "next/head";
 import {SiMoneygram} from "react-icons/si";
 import Image from "next/image";
-import Icon from "../../assets/pexels-pixabay-220453.jpg";
-import {MdNotificationsNone, MdOutlineLogout} from "react-icons/md";
-import {LuLayoutDashboard, LuSearch} from "react-icons/lu";
+import Icon from "../../../assets/pexels-pixabay-220453.jpg";
+import {MdNotificationsNone, MdOutlineLogout, MdOutlineFileDownload} from "react-icons/md";
+import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
-import {LuPencil} from "react-icons/lu";
 import {FiMenu} from "react-icons/fi";
+import {BsCheckCircleFill, BsFillXCircleFill } from "react-icons/bs";
 import Link from "next/link";
 
-function TransferByUserId() {
-    const [nominal, setNominal] = React.useState(0);
+function Success() {
 
     return (
         <div>
             <Head>
-                <title>ZIPay | Transfer</title>
+                <title>ZIPay | Profile Information</title>
             </Head>
             <header className="flex justify-between items-center px-[8%] py-6 bg-white rounded-b-3xl shadow-lg">
                 <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
@@ -45,8 +44,8 @@ function TransferByUserId() {
                             </div>
                         </div>
                         <div className="flex items-center gap-10">
-                            <div className="bg-primary w-1">.</div>
-                            <div className="flex gap-6 text-primary">
+                            <div className="bg-white text-white w-1">.</div>
+                            <div className="flex gap-6 text-accent hover:text-primary">
                                 <AiOutlineArrowUp size={30}/>
                                 <Link href="/transfer" className="font-[500] text-xl">Transfer</Link>
                             </div>
@@ -59,8 +58,8 @@ function TransferByUserId() {
                             </div>
                         </div>
                         <div className="flex items-center gap-10">
-                            <div className="bg-white text-white w-1">.</div>
-                            <div className="flex gap-6 text-accent hover:text-primary">
+                            <div className="bg-primary w-1">.</div>
+                            <div className="flex gap-6 text-primary">
                                 <AiOutlineUser size={30}/>
                                 <Link href="/profile" className="font-[500] text-xl">Profile</Link>
                             </div>
@@ -74,37 +73,38 @@ function TransferByUserId() {
                         </div>
                     </div>
                 </aside>
-                <div className="flex flex-col w-full rounded-3xl shadow-lg bg-white p-6 gap-6">
-                    <div className="flex flex-col w-full gap-2">
-                        <label className="font-[500] text-primary text-xl">Transfer Money</label>
+                <div className="flex flex-col w-full rounded-3xl shadow-lg bg-white p-6 gap-10">
+                    <div className="flex flex-col w-full gap-2 relative">
+                        <label className="font-[500] text-primary text-xl">Personal Information</label>
                     </div>
-                    <div className="flex flex-col gap-10">
-                        <div className="flex items-center shadow-lg p-2 rounded-xl">
-                            <div className="flex gap-3">
-                                <Link href="/profile/" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <div className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Cuakly</label>
-                                    <label className="text-xl">+62083673786</label>
-                                </div>
+                    <div>
+                        <p className="pr-[50%]">We got your personal information from the sign up proccess. If you want to make changes on your information, contact our support.</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <div className="flex items-center shadow-lg p-4 rounded-xl">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-md">Firstname</label>
+                                <label className="font-[500] text-secondary text-xl">Putu</label>
                             </div>
                         </div>
-                        <p className="text-primary pr-[60%]">Type the amount you want to transfer and then press continue to the next steps.</p>
-                        <div className="flex flex-col gap-10 justify-center items-center w-full px-[15%]">
-                            <input 
-                                className="text-center outline-none font-bold text-6xl text-accent" 
-                                type="text" 
-                                value={nominal} 
-                            />
-                            <label className="font-bold text-md text-primary">Rp120.000 Available</label>
-                            <div className="relative">
-                                <input className="border-b-2 w-full h-10 border-b-accent hover:border-b-primary outline-none px-10" placeholder="Add some note"></input>
-                                <LuPencil className="absolute text-accent bottom-2 left-2" size={22}/>
+                        <div className="flex items-center shadow-lg p-4 rounded-xl">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-md">Lastname</label>
+                                <label className="font-[500] text-secondary text-xl">Bagus Raditya</label>
                             </div>
                         </div>
-                        <div className="flex w-full h-12 justify-center lg:justify-end">
-                            <button className="btn btn-accent hover:btn-primary w-full h-full lg:w-36 normal-case text-xl rounded-xl">Continue</button>
+                        <div className="flex items-center shadow-lg p-4 rounded-xl">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-md">Verified E-mail</label>
+                                <label className="font-[500] text-xl text-accent">putu@mail.com</label>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-center shadow-lg p-4 rounded-xl">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-md">Phone Number</label>
+                                <label className="font-[500] text-xl text-secondary">+628123456789</label>
+                            </div>
+                            <Link href="/profile/personal-information/phoneNumber-manage" className="font-[500] text-warning hover:text-primary text-md px-6">Manage</Link>
                         </div>
                     </div>
                 </div>
@@ -120,4 +120,4 @@ function TransferByUserId() {
     );
 };
 
-export default TransferByUserId;
+export default Success;

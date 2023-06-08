@@ -59,7 +59,7 @@ function Homepage() {
                             <div className="bg-white text-white w-1">.</div>
                             <div className="flex gap-6 text-accent hover:text-primary">
                                 <AiOutlineUser size={30}/>
-                                <Link href="" className="font-[500] text-xl">Profile</Link>
+                                <Link href="/profile" className="font-[500] text-xl">Profile</Link>
                             </div>
                         </div>
                     </div>
@@ -79,8 +79,8 @@ function Homepage() {
                             <label className="text-xl text-accent">+62081234567</label>
                         </div>
                         <div className="flex flex-col gap-3">
-                            <button className="btn btn-accent flex gap-2 normal-case"><AiOutlineArrowUp size={25}/>Transfer</button>
-                            <button className="btn btn-accent flex gap-2 normal-case"><AiOutlinePlus size={25}/>Top Up</button>
+                            <Link href="/transfer" className="btn btn-accent flex gap-2 normal-case"><AiOutlineArrowUp size={25}/>Transfer</Link>
+                            <Link href="/topup" className="btn btn-accent flex gap-2 normal-case"><AiOutlinePlus size={25}/>Top Up</Link>
                         </div>
                     </div>
                     <div className="flex flex-col lg:flex-row gap-10">

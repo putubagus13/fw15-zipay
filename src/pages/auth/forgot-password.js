@@ -5,6 +5,7 @@ import Phone from "../../assets/phone.png";
 import {HiOutlineMail} from "react-icons/hi";
 import {SiMoneygram} from "react-icons/si";
 import Head from "next/head";
+import Link from "next/link";
 
 function ForgotPassword() {
     return (
@@ -16,7 +17,7 @@ function ForgotPassword() {
                 <div className='hidden w-[750px] lg:flex relative overflow-hidden'>
                     <Image className='absolute w-full h-[1000px] object-fit shadow-lg' src={Zipay} alt='Zipay'/>
                     <div className='absolute flex flex-col px-36 py-24 gap-10'>
-                        <div className='flex font-bold text-2xl text-white'><SiMoneygram className='text-white' size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</div>
+                        <Link href="/" className='flex font-bold text-2xl text-white'><SiMoneygram className='text-white' size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
                         <div className='flex flex-col gap-2'>
                             <h1 className='font-[500] text-white text-xl'>App that Covering Banking Needs.</h1>
                             <Image className='w-[400px] h-full' src={Phone} alt='Phone'/>

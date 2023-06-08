@@ -59,7 +59,7 @@ function History() {
                             <div className="bg-white text-white w-1">.</div>
                             <div className="flex gap-6 text-accent hover:text-primary">
                                 <AiOutlineUser size={30}/>
-                                <Link href="" className="font-[500] text-xl">Profile</Link>
+                                <Link href="/profile" className="font-[500] text-xl">Profile</Link>
                             </div>
                         </div>
                     </div>

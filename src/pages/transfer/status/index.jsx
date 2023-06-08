@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 import {SiMoneygram} from "react-icons/si";
 import Image from "next/image";
-import Icon from "../../assets/pexels-pixabay-220453.jpg";
+import Icon from "../../../assets/pexels-pixabay-220453.jpg";
 import {MdNotificationsNone, MdOutlineLogout, MdOutlineFileDownload} from "react-icons/md";
 import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
@@ -15,7 +15,7 @@ function Success() {
     return (
         <div>
             <Head>
-                <title>ZIPay | Success</title>
+                <title>ZIPay | Status</title>
             </Head>
             <header className="flex justify-between items-center px-[8%] py-6 bg-white rounded-b-3xl shadow-lg">
                 <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
@@ -61,7 +61,7 @@ function Success() {
                             <div className="bg-white text-white w-1">.</div>
                             <div className="flex gap-6 text-accent hover:text-primary">
                                 <AiOutlineUser size={30}/>
-                                <Link href="" className="font-[500] text-xl">Profile</Link>
+                                <Link href="/profile" className="font-[500] text-xl">Profile</Link>
                             </div>
                         </div>
                     </div>
@@ -127,9 +127,9 @@ function Success() {
                             </div>
                         </div>
                         {/* if success */}
-                        <div className="hidden flex gap-4 w-full h-16 justify-center lg:justify-end">
+                        <div className="hidden flex gap-4 w-full h-12 justify-center lg:justify-end">
                             <Link href="/home" className="btn btn-primary w-full h-full lg:w-48 normal-case rounded-2xl text-xl">Back to Home</Link>
-                            <button className="btn btn-neutral h-full w-full lg:w-60 normal-case rounded-2xl text-xl flex gap-2"><MdOutlineFileDownload size={25}/>Download PDF</button>
+                            <button className="btn btn-accent hover:btn-primary w-full h-full lg:w-36 normal-case text-xl rounded-xl"><MdOutlineFileDownload size={25}/>Download PDF</button>
                         </div>
 
                         {/* if failed */}
