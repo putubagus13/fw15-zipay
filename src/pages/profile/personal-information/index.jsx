@@ -9,9 +9,46 @@ import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
 import {FiMenu} from "react-icons/fi";
 import {BsCheckCircleFill, BsFillXCircleFill } from "react-icons/bs";
 import Link from "next/link";
+import { withIronSessionSsr } from "iron-session/next";
+import coockieConfig from "@/helpers/cookieConfig";
+import axios from "axios";
 
-function Success() {
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token;
+        console.log(token);
 
+        if(!token) {
+            res.setHeader("location", "/auth/login");
+            res.statusCode = 302;
+            res.end();
+            return {
+                prop: {}
+            };
+        }
+        const {data} = await axios.get("https://cute-lime-goldfish-toga.cyclic.app/profile", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        return {
+            props: {
+                token,
+                user: data.results
+            },
+        };
+        
+    },
+    coockieConfig
+);
+
+function PersonalInformation({token, user}) {
+    const fullname = user.fullName;
+    const nameLength = fullname.split(" ");
+    const firstName = nameLength[0];
+    const lastName = nameLength.slice(1).join(" ");
+    
     return (
         <div>
             <Head>
@@ -24,7 +61,7 @@ function Success() {
                         <Image className="object-cover" src={Icon} alt=""/>
                     </Link>
                     <div className="flex flex-col items-center">
-                        <p className="font-bold text-primary">Putu Bagus R</p>
+                        <p className="font-bold text-primary">{user.fullName}</p>
                         <p>+62081234567</p>
                     </div>
                     <MdNotificationsNone className="text-accent hover:text-primary" size={30}/>
@@ -83,20 +120,20 @@ function Success() {
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center shadow-lg p-4 rounded-xl">
                             <div className="flex flex-col gap-2">
-                                <label className="text-md">Firstname</label>
-                                <label className="font-[500] text-secondary text-xl">Putu</label>
+                                <label className="text-md">Putu</label>
+                                <label className="font-[500] text-secondary text-xl">{firstName}</label>
                             </div>
                         </div>
                         <div className="flex items-center shadow-lg p-4 rounded-xl">
                             <div className="flex flex-col gap-2">
                                 <label className="text-md">Lastname</label>
-                                <label className="font-[500] text-secondary text-xl">Bagus Raditya</label>
+                                <label className="font-[500] text-secondary text-xl">{lastName}</label>
                             </div>
                         </div>
                         <div className="flex items-center shadow-lg p-4 rounded-xl">
                             <div className="flex flex-col gap-2">
                                 <label className="text-md">Verified E-mail</label>
-                                <label className="font-[500] text-xl text-accent">putu@mail.com</label>
+                                <label className="font-[500] text-xl text-accent">{user.email}</label>
                             </div>
                         </div>
                         <div className="flex justify-between items-center shadow-lg p-4 rounded-xl">
@@ -120,4 +157,4 @@ function Success() {
     );
 };
 
-export default Success;
+export default PersonalInformation;
