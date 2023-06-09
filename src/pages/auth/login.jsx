@@ -16,7 +16,6 @@ import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { setLazyProp } from "next/dist/server/api-utils";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -111,33 +110,31 @@ function Login() {
                                 <p className='text-secondary'>Transfering money is eassier than ever, you can access ZiPay wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!</p>
                                 {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
                                 <div className='w-full flex flex-col gap-6'>
-                                    <div className='flex gap-3 justify-between items-center'>
-                                        <HiOutlineMail size={26}/>
-                                        <div className="flex flex-col form-control w-full">
-                                            <input 
-                                                type="text" 
-                                                name="email"
-                                                placeholder="Enter your email" 
-                                                className={`input input-bordered ${errors.email && touched.email && "input-error"} w-full`} 
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                value={values.email}
-                                            />
-                                            {errors.email && touched.email && (
-                                                <label className="label">
-                                                    <span className="label-text-alt text-error">{errors.email}</span>
-                                                </label>)
-                                            }
-                                        </div>
+                                    <div className="relative flex flex-col form-control w-full">
+                                        <HiOutlineMail className={`absolute left-2 top-2 ${errors.email && touched.email && "text-error"}`} size={26}/>
+                                        <input 
+                                            type="email" 
+                                            name= "email"
+                                            placeholder="Enter your email" 
+                                            className={`border-b-2 outline-none h-12 ${errors.email && touched.email && "border-error"} bg-base-100 w-full px-12`}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.email}
+                                        />
+                                        {errors.email && touched.email && (
+                                            <label className="label">
+                                                <span className="label-text-alt text-error">{errors.email}</span>
+                                            </label>)
+                                        }
                                     </div>
                                     <div className='flex gap-3 justify-between items-center'>
-                                        <RiLockPasswordLine size={26}/>
-                                        <div className="flex flex-col form-control w-full relative">
+                                        <div className="relative flex flex-col form-control w-full">
+                                            <RiLockPasswordLine className={`absolute left-2 top-2 ${errors.password && touched.password && "text-error"}`} size={26}/>
                                             <input 
-                                                type="password"
-                                                name="password" 
-                                                placeholder="Create your password" 
-                                                className={`input input-bordered ${errors.password && touched.password && "input-error"} w-full`} 
+                                                type="password" 
+                                                name= "password"
+                                                placeholder="Enter your password" 
+                                                className={`border-b-2 outline-none h-12 ${errors.password && touched.password && "border-error"} bg-base-100 w-full px-12`}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 value={values.password}
