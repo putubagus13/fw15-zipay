@@ -8,6 +8,30 @@ import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser, AiOutlineArrowDown} from "react-icons/ai";
 import {FiMenu} from "react-icons/fi";
 import Link from "next/link";
+import coockieConfig from "@/helpers/cookieConfig";
+import { withIronSessionSsr } from "iron-session/next";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token;
+
+        if(!token) {
+            res.setHeader("location", "/auth/login");
+            res.statusCode = 302;
+            res.end();
+            return {
+                props: {}
+            };
+        }
+
+        return {
+            props: {
+                token
+            },
+        };
+    },
+    coockieConfig
+);
 
 function Homepage() {
     return (
