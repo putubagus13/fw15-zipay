@@ -7,6 +7,7 @@ import {HiOutlineMail} from "react-icons/hi";
 import {RiLockPasswordLine} from "react-icons/ri";
 import {FiEye, FiEyeOff} from "react-icons/fi";
 import {SiMoneygram} from "react-icons/si";
+import {MdError} from "react-icons/md";
 import Head from "next/head";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -14,6 +15,8 @@ import * as Yup from "yup";
 import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { setLazyProp } from "next/dist/server/api-utils";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -23,7 +26,7 @@ export const getServerSideProps = withIronSessionSsr(
             res.setHeader("location", "/home");
             res.statusCode = 302;
             res.end();
-            return { props: {token} };
+            return { prop: {token} };
         }
 
         return {
@@ -41,14 +44,27 @@ const validationSchema = Yup.object({
 });
 
 function Login() {
+    const router = useRouter();
+    const [loading, setLoading] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+
     const doLogin = async(values)=>{
+        setLoading(true);
         const form = new URLSearchParams({
             email: values.email, 
             password: values.password
         }).toString();
 
         const {data} = await axios.post("http://localhost:3000/api/login", form);
-        console.log(data);
+        console.log(data.success);
+        if(data.success === false){
+            setErrorMessage("Email or Password wrong");
+            setLoading(false);
+        }
+        if(data.success === true){
+            router.push("/home");
+            setLoading(false);
+        }
     };
 
     return (
@@ -87,13 +103,13 @@ function Login() {
                             handleChange,
                             handleBlur,
                             handleSubmit,
-                            isSubmitting,
-                            /* and other goodies */
+ 
                         }) => (
                             <form onSubmit={handleSubmit} className='flex flex-col gap-10 w-full'>
                                 <div className='lg:hidden flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</div>
                                 <h1 className='font-[500] text-primary text-2xl'>Start Accessing Banking Needs With All Devices and All Platforms With 30.000+ Users</h1>
                                 <p className='text-secondary'>Transfering money is eassier than ever, you can access ZiPay wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!</p>
+                                {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
                                 <div className='w-full flex flex-col gap-6'>
                                     <div className='flex gap-3 justify-between items-center'>
                                         <HiOutlineMail size={26}/>
@@ -138,7 +154,9 @@ function Login() {
                                     </div>
                                     <Link href='/auth/forgot-password' className='text-accent hover:text-primary text-right'>Forgot password?</Link>
                                 </div>
-                                <button className="btn btn-primary normal-case text-white">Log In</button>
+                                {loading ? (<button className="btn btn-primary normal-case text-white"><span className="loading loading-spinner loading-sm"></span></button>) :
+                                    (<button className="btn btn-primary normal-case text-white">Log In</button>) }
+                                
                                 <p className='text-primary flex gap-2 justify-center'>Dont have an account? Let’s
                                     <Link href='/auth/register' className='text-accent hover:text-secondary'>Sign Up</Link>
                                 </p>
