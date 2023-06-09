@@ -6,8 +6,59 @@ import {HiOutlineMail} from "react-icons/hi";
 import {SiMoneygram} from "react-icons/si";
 import Head from "next/head";
 import Link from "next/link";
+import {MdError} from "react-icons/md";
+import { Formik } from "formik";
+import { withIronSessionSsr } from "iron-session/next";
+import coockieConfig from "@/helpers/cookieConfig";
+import axios from "axios";
+import { useRouter } from "next/router";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token;
+
+        if (token) {
+            res.setHeader("location", "/home");
+            res.statusCode = 302;
+            res.end();
+            return { prop: {token} };
+        }
+
+        return {
+            props: {
+                token: null
+            },
+        };
+    },
+    coockieConfig
+);
+
+const validationSchema = Yup.object({
+    email: Yup.string().email("Email is invalid").required("Email is invalid"),
+});
 
 function ForgotPassword() {
+    const router = useRouter();
+    const [loading, setLoading] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+
+    const doForgotPassword = async(values)=>{
+        setLoading(true);
+        const form = new URLSearchParams({
+            email: values.email, 
+        }).toString();
+
+        const {data} = await axios.post("http://localhost:3000/api/forgotPassword", form);
+        console.log(data.success);
+        if(data.success === false){
+            setErrorMessage("Request Failed");
+            setLoading(false);
+        }
+        if(data.success === true){
+            router.push("/auth/reset-password");
+            setLoading(false);
+        }
+    };
     return (
         <>
             <Head>
@@ -30,25 +81,52 @@ function ForgotPassword() {
                     </div>
                 </div>
                 <div className='flex-1 px-[8%] py-24'>
-                    <form className='flex flex-col gap-16 w-full'>
-                        <div className='flex flex-col gap-10 w-full'>
-                            <div className='lg:hidden flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</div>
-                            <h1 className='font-[500] text-primary text-2xl'>Did You Forgot Your Password? Don’t Worry, You Can Reset Your Password In a Minutes.</h1>
-                            <p className='text-secondary'>To reset your password, you must type your e-mail and we will send a link to your email and you will be directed to the reset password screens.</p>
-                        </div>
-                        <div className='w-full flex flex-col gap-6'>
-                            <div className='flex gap-3 justify-between items-center'>
-                                <HiOutlineMail size={26}/>
-                                <div className="flex flex-col form-control w-full">
-                                    <input type="text" placeholder="Enter your email" className="input input-bordered w-full" />
-                                    <label className="label hidden">
-                                        <span className="label-text-alt"></span>
-                                    </label>
+                    <Formik 
+                        initialValues={{ 
+                            email: "" }}
+                        validationSchema = {validationSchema}
+                        onSubmit={doForgotPassword}
+                    >
+                        {({
+                            values,
+                            errors,
+                            touched,
+                            handleChange,
+                            handleBlur,
+                            handleSubmit,
+ 
+                        }) => (
+                            <form onSubmit={handleSubmit} className='flex flex-col gap-16 w-full'>
+                                <div className='flex flex-col gap-10 w-full'>
+                                    <div className='lg:hidden flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</div>
+                                    <h1 className='font-[500] text-primary text-2xl'>Did You Forgot Your Password? Don’t Worry, You Can Reset Your Password In a Minutes.</h1>
+                                    <p className='text-secondary'>To reset your password, you must type your e-mail and we will send a link to your email and you will be directed to the reset password screens.</p>
                                 </div>
-                            </div>
-                        </div>
-                        <button className="btn btn-primary normal-case text-white">Confirm</button>
-                    </form>
+                                {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
+                                <div className='w-full flex flex-col gap-6'>
+                                    <div className="relative flex flex-col form-control w-full">
+                                        <HiOutlineMail className={`absolute left-2 top-2 ${errors.email && touched.email && "text-error"}`} size={26}/>
+                                        <input 
+                                            type="email" 
+                                            name= "email"
+                                            placeholder="Enter your email" 
+                                            className={`border-b-2 outline-none h-12 ${errors.email && touched.email && "border-error"} bg-base-100 w-full px-12`}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.email}
+                                        />
+                                        {errors.email && touched.email && (
+                                            <label className="label">
+                                                <span className="label-text-alt text-error">{errors.email}</span>
+                                            </label>)
+                                        }
+                                    </div>
+                                </div>
+                                {loading ? (<button className="btn btn-primary normal-case text-white"><span className="loading loading-spinner loading-sm"></span></button>) :
+                                    (<button className="btn btn-primary normal-case text-white">Confirm</button>) }
+                            </form>
+                        )}
+                    </Formik>
                 </div>
             </div>
         </>
