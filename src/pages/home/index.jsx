@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Head from "next/head";
 import {SiMoneygram} from "react-icons/si";
 import Image from "next/image";
@@ -10,6 +10,8 @@ import {FiMenu} from "react-icons/fi";
 import Link from "next/link";
 import coockieConfig from "@/helpers/cookieConfig";
 import { withIronSessionSsr } from "iron-session/next";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -34,6 +36,12 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function Homepage() {
+    const router = useRouter();
+    const doLogout = async()=>{
+        await axios.get("/api/logout");
+        router.replace("/auth/login");
+    };
+
     return (
         <div>
             <Head>
@@ -91,7 +99,7 @@ function Homepage() {
                         <div className="bg-white text-white w-1">.</div>
                         <div className="flex gap-6 text-accent hover:text-primary">
                             <MdOutlineLogout size={30}/>
-                            <Link href="" className="font-[500] text-xl">Log Out</Link>
+                            <button onClick={doLogout} href="" className="font-[500] text-xl">Log Out</button>
                         </div>
                     </div>
                 </aside>

@@ -10,6 +10,8 @@ import {FiMenu, FiArrowRight} from "react-icons/fi";
 import Link from "next/link";
 import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -20,20 +22,32 @@ export const getServerSideProps = withIronSessionSsr(
             res.statusCode = 302;
             res.end();
             return {
-                props: {}
+                prop: {}
             };
         }
-
+        const {data} = await axios.get("https://cute-lime-goldfish-toga.cyclic.app/profile", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
         return {
             props: {
-                token
+                token,
+                user: data.results
             },
         };
+        
     },
     coockieConfig
 );
 
-function Success() {
+function Profile({token, user}) {
+    const router = useRouter();
+    const doLogout = async()=>{
+        await axios.get("/api/logout");
+        router.replace("/auth/login");
+    };
 
     return (
         <div>
@@ -42,12 +56,12 @@ function Success() {
             </Head>
             <header className="flex justify-between items-center px-[8%] py-6 bg-white rounded-b-3xl shadow-lg">
                 <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
-                <div className="hidden lg:flex justify-center items-center gap-3">
+                <div className="hidden lg:flex items-center gap-3">
                     <Link href="/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
                         <Image className="object-cover" src={Icon} alt=""/>
                     </Link>
-                    <div className="flex flex-col items-center">
-                        <p className="font-bold text-primary">Putu Bagus R</p>
+                    <div className="flex flex-col">
+                        <p className="font-bold text-primary">{user.fullName}</p>
                         <p>+62081234567</p>
                     </div>
                     <MdNotificationsNone className="text-accent hover:text-primary" size={30}/>
@@ -92,7 +106,17 @@ function Success() {
                         <div className="bg-white text-white w-1">.</div>
                         <div className="flex gap-6 text-accent hover:text-primary">
                             <MdOutlineLogout size={30}/>
-                            <Link href="" className="font-[500] text-xl">Log Out</Link>
+                            <button onClick={()=>window.my_modal_5.showModal()} className="font-[500] text-xl">Log Out</button>
+                            <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+                                <form method="dialog" className="modal-box">
+                                    <h3 className="font-bold text-lg">Log Out</h3>
+                                    <p className="py-4">Are you sure you want to logout?</p>
+                                    <div className="modal-action">
+                                        <button type="button" onClick={doLogout} className="btn btn-error">Ok</button>
+                                        <button className="btn">Close</button>
+                                    </div>
+                                </form>
+                            </dialog>
                         </div>
                     </div>
                 </aside>
@@ -104,7 +128,7 @@ function Success() {
                             </div>
                             <button type="button" className="flex gap-2 items-center justify-center font-[500] text-accent hover:text-primary"><LuPencil size={17}/>Edit</button>
                             <div className="flex flex-col items-center">
-                                <p className="font-bold text-primary">Putu Bagus R</p>
+                                <p className="font-bold text-primary">{user.fullName}</p>
                                 <p>+62081234567</p>
                             </div>
                         </div>
@@ -128,4 +152,4 @@ function Success() {
     );
 };
 
-export default Success;
+export default Profile;
