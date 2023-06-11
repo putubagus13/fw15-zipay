@@ -8,10 +8,12 @@ import {LuLayoutDashboard, LuPencil} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
 import {FiMenu, FiArrowRight} from "react-icons/fi";
 import Link from "next/link";
+
 import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Header from "@/components/Header";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -54,22 +56,7 @@ function Profile({token, user}) {
             <Head>
                 <title>ZIPay | Profile</title>
             </Head>
-            <header className="flex justify-between items-center px-[8%] py-6 bg-white rounded-b-3xl shadow-lg">
-                <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
-                <div className="hidden lg:flex items-center gap-3">
-                    <Link href="/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
-                        <Image className="object-cover" src={Icon} alt=""/>
-                    </Link>
-                    <div className="flex flex-col">
-                        <p className="font-bold text-primary">{user.fullName}</p>
-                        <p>+62081234567</p>
-                    </div>
-                    <MdNotificationsNone className="text-accent hover:text-primary" size={30}/>
-                </div>
-                <div className="flex justify-end items-center lg:hidden">
-                    <button type="button"><FiMenu className="flex items-center text-primary" size={35} /></button>
-                </div>
-            </header>
+            <Header token={token} />
             <div className="flex gap-6 h-[750px] px-[6%] py-16">
                 <aside className="hidden lg:flex flex-col bg-white pr-[2%] py-10 w-96 justify-between rounded-3xl shadow-lg">
                     <div className="flex flex-col gap-11">

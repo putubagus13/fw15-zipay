@@ -1,17 +1,17 @@
-import React, { useCallback } from "react";
+import React from "react";
 import Head from "next/head";
-import {SiMoneygram} from "react-icons/si";
 import Image from "next/image";
 import Icon from "../../assets/pexels-pixabay-220453.jpg";
-import {MdNotificationsNone, MdOutlineLogout} from "react-icons/md";
+import {MdOutlineLogout} from "react-icons/md";
 import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser, AiOutlineArrowDown} from "react-icons/ai";
-import {FiMenu} from "react-icons/fi";
 import Link from "next/link";
-import coockieConfig from "@/helpers/cookieConfig";
+
 import { withIronSessionSsr } from "iron-session/next";
+import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Header from "@/components/Header";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -22,20 +22,27 @@ export const getServerSideProps = withIronSessionSsr(
             res.statusCode = 302;
             res.end();
             return {
-                props: {}
+                prop: {}
             };
         }
-
+        const {data} = await axios.get("https://cute-lime-goldfish-toga.cyclic.app/profile", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
         return {
             props: {
-                token
+                token,
+                user: data.results
             },
         };
+        
     },
     coockieConfig
 );
 
-function Homepage() {
+function Homepage({token}) {
     const router = useRouter();
     const doLogout = async()=>{
         await axios.get("/api/logout");
@@ -47,22 +54,7 @@ function Homepage() {
             <Head>
                 <title>ZIPay | Home</title>
             </Head>
-            <header className="flex justify-between items-center px-[8%] py-6 bg-white rounded-b-3xl shadow-lg">
-                <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
-                <div className="hidden lg:flex justify-center items-center gap-3">
-                    <Link href="/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
-                        <Image className="object-cover" src={Icon} alt=""/>
-                    </Link>
-                    <div className="flex flex-col items-center">
-                        <p className="font-bold text-primary">Putu Bagus R</p>
-                        <p>+62081234567</p>
-                    </div>
-                    <MdNotificationsNone className="text-accent hover:text-primary" size={30}/>
-                </div>
-                <div className="flex justify-end items-center lg:hidden">
-                    <button type="button"><FiMenu className="flex items-center text-primary" size={35} /></button>
-                </div>
-            </header>
+            <Header token={token}/>
             <div className="flex gap-6 px-[6%] py-16">
                 <aside className="hidden lg:flex flex-col bg-white pr-[2%] py-10 w-96 justify-between rounded-3xl shadow-lg">
                     <div className="flex flex-col gap-11">
@@ -99,7 +91,17 @@ function Homepage() {
                         <div className="bg-white text-white w-1">.</div>
                         <div className="flex gap-6 text-accent hover:text-primary">
                             <MdOutlineLogout size={30}/>
-                            <button onClick={doLogout} href="" className="font-[500] text-xl">Log Out</button>
+                            <button onClick={()=>window.my_modal_5.showModal()} className="font-[500] text-xl">Log Out</button>
+                            <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+                                <form method="dialog" className="modal-box">
+                                    <h3 className="font-bold text-lg">Log Out</h3>
+                                    <p className="py-4">Are you sure you want to logout?</p>
+                                    <div className="modal-action">
+                                        <button type="button" onClick={doLogout} className="btn btn-error">Ok</button>
+                                        <button className="btn">Close</button>
+                                    </div>
+                                </form>
+                            </dialog>
                         </div>
                     </div>
                 </aside>
