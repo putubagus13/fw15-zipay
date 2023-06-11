@@ -12,6 +12,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import { useRouter } from "next/router";
+import * as Yup from "yup";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -43,15 +44,24 @@ function ForgotPassword() {
     const [errorMessage, setErrorMessage] = React.useState("");
 
     const doForgotPassword = async(values)=>{
+        setErrorMessage("");
         setLoading(true);
         const form = new URLSearchParams({
             email: values.email, 
         }).toString();
 
-        const {data} = await axios.post("http://localhost:3000/api/forgotPassword", form);
-        console.log(data.success);
-        if(data.success === false){
-            setErrorMessage("Request Failed");
+        const {data} = await axios.post("http://localhost:3000/api/forgot-password", form);
+        console.log(data);
+        if(data.message === "auth_forgot_already_requested"){
+            setErrorMessage("Forgot password already requested");
+            setLoading(false);
+        }
+        if(data.message === "auth_wrong_user"){
+            setErrorMessage("User email not found");
+            setLoading(false);
+        }
+        if(data.message === "internal_server_error"){
+            setErrorMessage("Backend not connected");
             setLoading(false);
         }
         if(data.success === true){
