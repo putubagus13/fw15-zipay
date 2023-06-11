@@ -46,8 +46,10 @@ function Login() {
     const router = useRouter();
     const [loading, setLoading] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
+    const [showEye, setShowEye] = React.useState(false);
 
     const doLogin = async(values)=>{
+        setErrorMessage("");
         setLoading(true);
         const form = new URLSearchParams({
             email: values.email, 
@@ -55,7 +57,6 @@ function Login() {
         }).toString();
 
         const {data} = await axios.post("http://localhost:3000/api/login", form);
-        console.log(data.success);
         if(data.success === false){
             setErrorMessage("Email or Password wrong");
             setLoading(false);
@@ -64,6 +65,10 @@ function Login() {
             router.push("/home");
             setLoading(false);
         }
+    };
+
+    const doShowEye = ()=>{
+        setShowEye(!showEye);
     };
 
     return (
@@ -131,7 +136,7 @@ function Login() {
                                         <div className="relative flex flex-col form-control w-full">
                                             <RiLockPasswordLine className={`absolute left-2 top-2 ${errors.password && touched.password && "text-error"}`} size={26}/>
                                             <input 
-                                                type="password" 
+                                                type={showEye ? "text" : "password"} 
                                                 name= "password"
                                                 placeholder="Enter your password" 
                                                 className={`border-b-2 outline-none h-12 ${errors.password && touched.password && "border-error"} bg-base-100 w-full px-12`}
@@ -144,8 +149,11 @@ function Login() {
                                                     <span className="label-text-alt text-error">{errors.password}</span>
                                                 </label>)
                                             }
-                                            <button type="button">
-                                                <FiEye size={23} className="absolute top-3 right-5" />
+                                            <button type="button" onClick={doShowEye}>
+                                                {showEye ? (<FiEyeOff size={23} className="absolute top-3 right-5" />) :
+                                                    (<FiEye size={23} className="absolute top-3 right-5" />)
+                                                }
+                                                    
                                             </button>
                                         </div>
                                     </div>

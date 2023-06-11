@@ -38,6 +38,7 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 const validationSchema = Yup.object({
+    username: Yup.string().required("Username is invalid").min(3, "Must have at least 3 characters"),
     firstName: Yup.string().required("Firstname is invalid").min(3, "First name must have at least 3 characters"),
     lastName: Yup.string().required("Lastname is invalid").min(3, "First name must have at least 3 characters"),
     email: Yup.string().email("Email is invalid").required("Email is invalid"),
@@ -48,26 +49,43 @@ function Register() {
     const router = useRouter();
     const [loading, setLoading] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
+    const [showEye, setShoweEye] = React.useState(false);
 
     const doRegister = async(values)=>{
         setLoading(true);
+        const fullName = values.firstName + " " + values.lastName;
+        
         const form = new URLSearchParams({
-            firstName: values.firstName,
-            lastName: values.lastName,
+            username: values.username,
             email: values.email, 
             password: values.password
         }).toString();
 
+        const formProfile = new FormData();
+        formProfile.append("fullName", fullName);
+
         const {data} = await axios.post("http://localhost:3000/api/register", form);
-        console.log(data.success);
+        console.log(data);
+
         if(data.success === false){
             setErrorMessage("Registration Failed");
             setLoading(false);
         }
+
         if(data.success === true){
+            const profileData = await axios.patch("https://cute-lime-goldfish-toga.cyclic.app/profile", formProfile, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${data.results.token}`
+                }
+            } );
             router.push("/auth/login");
             setLoading(false);
         }
+    };
+
+    const doShowEye = ()=>{
+        setShoweEye(!showEye);
     };
     return (
         <>
@@ -94,6 +112,7 @@ function Register() {
                     <div className='flex-1 px-[8%] py-24'>
                         <Formik 
                             initialValues={{ 
+                                username: "",
                                 email: "",
                                 firstName: "",
                                 lastName: "", 
@@ -123,7 +142,7 @@ function Register() {
                                                     type="text" 
                                                     name= "firstName"
                                                     placeholder="Enter your firstname" 
-                                                    className={`border-b-2 outline-none h-12 ${errors.firstName && touched.firstName && "border-error"} bg-base-100 w-full px-12`}
+                                                    className={`border-b-2 outline-none h-12 ${errors.firstName && touched.firstName ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     value={values.firstName}
@@ -142,7 +161,7 @@ function Register() {
                                                     type="text" 
                                                     name= "lastName"
                                                     placeholder="Enter your lastname" 
-                                                    className={`border-b-2 outline-none h-12 ${errors.lastName && touched.lastName && "border-error"} bg-base-100 w-full px-12`}
+                                                    className={`border-b-2 outline-none h-12 ${errors.lastName && touched.lastName ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     value={values.lastName}
@@ -156,12 +175,31 @@ function Register() {
                                         </div>
                                         <div className='flex gap-3 justify-between items-center'>
                                             <div className="relative flex flex-col form-control w-full">
+                                                <AiOutlineUser className={`absolute left-2 top-2 ${errors.username && touched.username && "text-error"}`} size={26}/>
+                                                <input 
+                                                    type="text" 
+                                                    name= "username"
+                                                    placeholder="Enter your username" 
+                                                    className={`border-b-2 outline-none h-12 ${errors.username && touched.username ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    value={values.username}
+                                                />
+                                                {errors.username && touched.username && (
+                                                    <label className="label">
+                                                        <span className="label-text-alt text-error">{errors.username}</span>
+                                                    </label>)
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className='flex gap-3 justify-between items-center'>
+                                            <div className="relative flex flex-col form-control w-full">
                                                 <HiOutlineMail className={`absolute left-2 top-2 ${errors.email && touched.email && "text-error"}`} size={26}/>
                                                 <input 
                                                     type="email" 
                                                     name= "email"
                                                     placeholder="Enter your email" 
-                                                    className={`border-b-2 outline-none h-12 ${errors.email && touched.email && "border-error"} bg-base-100 w-full px-12`}
+                                                    className={`border-b-2 outline-none h-12 ${errors.email && touched.email ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     value={values.email}
@@ -177,10 +215,10 @@ function Register() {
                                             <div className="relative flex flex-col form-control w-full">
                                                 <RiLockPasswordLine className={`absolute left-2 top-2 ${errors.password && touched.password && "text-error"}`} size={26}/>
                                                 <input 
-                                                    type="password" 
+                                                    type={showEye ? "text" : "password" } 
                                                     name= "password"
                                                     placeholder="Enter your password" 
-                                                    className={`border-b-2 outline-none h-12 ${errors.password && touched.password && "border-error"} bg-base-100 w-full px-12`}
+                                                    className={`border-b-2 outline-none h-12 ${errors.password && touched.password ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     value={values.password}
@@ -190,14 +228,17 @@ function Register() {
                                                         <span className="label-text-alt text-error">{errors.password}</span>
                                                     </label>)
                                                 }
-                                                <button type="button">
-                                                    <FiEye size={23} className="absolute top-3 right-5" />
+                                                <button type="button" onClick={doShowEye}>
+                                                    {showEye ? (<FiEyeOff size={23} className="absolute top-3 right-5" />) :
+                                                        (<FiEye size={23} className="absolute top-3 right-5" />)
+                                                    }
+                                                    
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                     {loading ? (<button className="btn btn-primary normal-case text-white"><span className="loading loading-spinner loading-sm"></span></button>) :
-                                        (<button className="btn btn-primary normal-case text-white">Log In</button>) }
+                                        (<button className="btn btn-primary normal-case text-white">Sign Up</button>) }
                                     <p className='text-primary flex gap-2 justify-center'>Already have an account? Let’s
                                         <Link href='/auth/login' className='text-accent hover:text-secondary'>Login</Link>
                                     </p>
