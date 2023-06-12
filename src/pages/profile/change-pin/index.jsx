@@ -54,11 +54,10 @@ function ChangePin({token}) {
         try {
             e.preventDefault();
             const form = new URLSearchParams({
-                pin
+                pin,
             }).toString();
 
             if(pin.length === 6){
-                console.log("test");
                 const {data} = await http(token).patch("/profile/change-pin", form);
                 console.log(data);
                 if(data.success === true){
@@ -66,7 +65,6 @@ function ChangePin({token}) {
                     setPin("");
                 }
             }else{
-                console.log("testeror");
                 setErrorMessage("Pin must be 6 digits");
             }
         } catch (error) {

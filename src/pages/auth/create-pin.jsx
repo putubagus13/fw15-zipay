@@ -50,7 +50,7 @@ function CreatePin() {
                 setSuccessMassage(true);
                 setLoading(false);
                 setTimeout(() => {
-                    router.replace("auth/login");
+                    router.replace("/auth/login");
                 }, 1000);
                 
             }

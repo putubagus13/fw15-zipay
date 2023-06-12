@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import {MdOutlineLogout} from "react-icons/md";
-import {LuLayoutDashboard} from "react-icons/lu";
+import {LuLayoutDashboard, LuPencil} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
 import Link from "next/link";
 import { withIronSessionSsr } from "iron-session/next";
@@ -9,6 +9,7 @@ import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
+import UpdateProfile from "@/components/UpdateProfile";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -41,15 +42,25 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function PersonalInformation({token, user}) {
-    const fullname = user.fullName;
-    const nameLength = fullname.split(" ");
-    const firstName = nameLength[0];
-    const lastName = nameLength.slice(1).join(" ");
+    const [edit, setEdit] = React.useState(false);
+    const fullname = user?.fullName;
+    let nameLength;
+    let firstName;
+    let lastName;
+    if(fullname){
+        nameLength = fullname.split(" ");
+        firstName = nameLength[0];
+        lastName = nameLength.slice(1).join(" ");
+    }
 
     const router = useRouter();
     const doLogout = async()=>{
         await axios.get("/api/logout");
         router.replace("/auth/login");
+    };
+
+    const doEdit = ()=>{
+        setEdit(!edit);
     };
     
     return (
@@ -115,17 +126,20 @@ function PersonalInformation({token, user}) {
                     <div>
                         <p className="pr-[50%]">We got your personal information from the sign up proccess. If you want to make changes on your information, contact our support.</p>
                     </div>
-                    <div className="flex flex-col gap-3">
+                    { edit ? (<UpdateProfile token={token} onSave={setEdit} />) : (<div className="flex flex-col gap-3">
+                        <button onClick={doEdit}  className="flex gap-2 px-6 font-[500] text-md text-warning hover:text-primary justify-end items-center"><LuPencil size={20}/>Edit</button>
                         <div className="flex items-center shadow-lg p-4 rounded-xl">
                             <div className="flex flex-col gap-2">
-                                <label className="text-md">Putu</label>
-                                <label className="font-[500] text-secondary text-xl">{firstName}</label>
+                                <label className="text-md">Firstname</label>
+                                {typeof firstName === "string"  ? (<label className="font-[500] text-secondary text-xl">{firstName}</label>) 
+                                    : (<label className="font-[500] text-secondary text-xl">-</label>)}
                             </div>
                         </div>
                         <div className="flex items-center shadow-lg p-4 rounded-xl">
                             <div className="flex flex-col gap-2">
                                 <label className="text-md">Lastname</label>
-                                <label className="font-[500] text-secondary text-xl">{lastName}</label>
+                                {typeof firstName === "string"  ? (<label className="font-[500] text-secondary text-xl">{lastName}</label>) 
+                                    : (<label className="font-[500] text-secondary text-xl">-</label>)}
                             </div>
                         </div>
                         <div className="flex items-center shadow-lg p-4 rounded-xl">
@@ -141,7 +155,7 @@ function PersonalInformation({token, user}) {
                             </div>
                             <Link href="/profile/personal-information/phoneNumber-manage" className="font-[500] text-warning hover:text-primary text-md px-6">Manage</Link>
                         </div>
-                    </div>
+                    </div>)}
                 </div>
             </div>
             <footer className="flex flex-col md:flex-row gap-6 justify-between bg-secondary px-[8%] py-6">

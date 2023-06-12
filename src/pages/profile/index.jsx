@@ -88,7 +88,7 @@ function Profile({token, user}) {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-10">
+                    {/* <div className="flex items-center gap-10">
                         <div className="bg-white text-white w-1">.</div>
                         <div className="flex gap-6 text-accent hover:text-primary">
                             <MdOutlineLogout size={30}/>
@@ -104,7 +104,7 @@ function Profile({token, user}) {
                                 </form>
                             </dialog>
                         </div>
-                    </div>
+                    </div> */}
                 </aside>
                 <div className="flex flex-col w-full rounded-3xl shadow-lg bg-white py-16 px-[10%] gap-6">
                     <div className="flex flex-col gap-12">
@@ -124,7 +124,17 @@ function Profile({token, user}) {
                         <Link href="/profile/personal-information" className="btn btn-neutral w-full flex justify-between items-center px-6 normal-case">Personal Information<FiArrowRight size={20}/></Link>
                         <Link href="/profile/change-password" className="btn btn-neutral w-full flex justify-between items-center px-6 normal-case">Change Password<FiArrowRight size={20}/></Link>
                         <Link href="/profile/change-pin" className="btn btn-neutral w-full flex justify-between items-center px-6 normal-case">Change PIN<FiArrowRight size={20}/></Link>
-                        <Link href="/profile/logout" className="btn btn-neutral w-full flex justify-between items-center px-6 normal-case">Log Out<FiArrowRight size={20}/></Link>
+                        <button onClick={()=>window.my_modal_5.showModal()} className="btn btn-neutral w-full flex justify-between items-center px-6 normal-case">Log Out<MdOutlineLogout className="text-error" size={20}/></button>
+                        <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+                            <form method="dialog" className="modal-box">
+                                <h3 className="font-bold text-lg">Log Out</h3>
+                                <p className="py-4">Are you sure you want to logout?</p>
+                                <div className="modal-action">
+                                    <button type="button" onClick={doLogout} className="btn btn-error">Ok</button>
+                                    <button className="btn">Close</button>
+                                </div>
+                            </form>
+                        </dialog>
                     </div>
                 </div>
             </div>
