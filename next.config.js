@@ -7,7 +7,7 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "res.cloudinary.com",
                 port: "",
-                pathname: "/dxs0yxeyr/image/upload/v1686543270/fazzpay-master/**"
+                pathname: "/dxs0yxeyr/image/upload/**"
             }
         ]
     }
