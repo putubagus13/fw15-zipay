@@ -23,7 +23,7 @@ function Header({token}) {
             <Link href="/home" className='flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</Link>
             <div className="hidden lg:flex justify-center items-center gap-3">
                 <Link href="/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
-                    {profile?.picture ? (<Image width={150} height={150} className="object-fit" src={user.picture} alt="userImage"/>) 
+                    {profile?.picture ? (<Image width={150} height={150} className="object-fit" src={profile.picture} alt="userImage"/>) 
                         : (<Image className="object-fit" src={User} alt="user"/>) }
                 </Link>
                 <div className="flex flex-col">
