@@ -1,12 +1,11 @@
 import React from "react";
 import Head from "next/head";
-import {SiMoneygram} from "react-icons/si";
 import Image from "next/image";
-import Icon from "../../assets/pexels-pixabay-220453.jpg";
-import {MdNotificationsNone, MdOutlineLogout, MdOutlineFileDownload} from "react-icons/md";
+import {MdOutlineLogout} from "react-icons/md";
 import {LuLayoutDashboard, LuPencil} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
-import {FiMenu, FiArrowRight} from "react-icons/fi";
+import {FiArrowRight} from "react-icons/fi";
+import User from "@/assets/user.png";
 import Link from "next/link";
 
 import { withIronSessionSsr } from "iron-session/next";
@@ -111,7 +110,8 @@ function Profile({token, user}) {
                     <div className="flex flex-col gap-12">
                         <div className="flex flex-col justify-center items-center gap-3">
                             <div className="w-20 h-20 overflow-hidden rounded-2xl">
-                                <Image className="object-cover" src={Icon} alt=""/>
+                                {user?.picture ? (<Image width={150} height={150} className="object-fit" src={user.picture} alt="userImage"/>) 
+                                    : (<Image className="object-fit" src={User} alt="user"/>) }
                             </div>
                             <button type="button" className="flex gap-2 items-center justify-center font-[500] text-accent hover:text-primary"><LuPencil size={17}/>Edit</button>
                             <div className="flex flex-col items-center">

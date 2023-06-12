@@ -7,6 +7,7 @@ import {HiOutlineMail} from "react-icons/hi";
 import {RiLockPasswordLine} from "react-icons/ri";
 import {FiEye, FiEyeOff} from "react-icons/fi";
 import {SiMoneygram} from "react-icons/si";
+import {BsCheckCircleFill} from "react-icons/bs";
 import Head from "next/head";
 import {MdError} from "react-icons/md";
 import { Formik } from "formik";
@@ -59,11 +60,12 @@ function ResetPassword() {
         setLoading(true);
         const form = new URLSearchParams({
             email: values.email, 
-            password: values.password,
+            newPassword: values.password,
             confirmPassword: values.confirmPassword
         }).toString();
 
         const {data} = await axios.post("http://localhost:3000/api/reset-password", form);
+        console.log(data);
 
         if(data.message === "auth_reset_password_not_match"){
             setErrorMessage("You have not made a reset request");
@@ -124,6 +126,7 @@ function ResetPassword() {
                         }) => (
                             <form onSubmit={handleSubmit} className='flex flex-col gap-10 w-full'>
                                 <div className='lg:hidden flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</div>
+                                {successMessage && <BsCheckCircleFill className='text-success' size={60}/>}
                                 <h1 className='font-[500] text-primary text-2xl'>Start Accessing Banking Needs With All Devices and All Platforms With 30.000+ Users</h1>
                                 <p className='text-secondary'>Transfering money is eassier than ever, you can access ZiPay wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!</p>
                                 {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}

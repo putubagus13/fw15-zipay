@@ -4,46 +4,64 @@ import Zipay from "../../assets/ZiPay.png";
 import Phone from "../../assets/phone.png";
 import {SiMoneygram} from "react-icons/si";
 import {BsCheckCircleFill} from "react-icons/bs";
-import {MdError, MdCheckCircle} from "react-icons/md";
-import {HiOutlineMail} from "react-icons/hi";
+import {MdError} from "react-icons/md";
 import Head from "next/head";
 import Link from "next/link";
 import PinInput from "@/components/PinInput";
 
-import axios from "axios";
 import { useRouter } from "next/router";
+import http from "@/helpers/http";
+import { useSelector } from "react-redux";
 
 function CreatePin() {
+    const email = useSelector(state => state.auth.email);
     const router = useRouter();
-    const [pinValue, setPinValue] = React.useState(0);
+    const [pin, setPin] = React.useState(0);
     const [loading, setLoading] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
     const [successMessage, setSuccessMassage] = React.useState(false);
-    const [email, setEmail] = React.useState("");
 
-    const doCreatePin = async()=>{
-        setErrorMessage("");
-        setSuccessMassage("");
-        setLoading(true);
-        const form = new URLSearchParams({
-            email: email,
-            pin: pinValue
-        }).toString();
-
-        const {data} = await axios.post("http://localhost:3000/api/create-pin", form, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            }
-        });
-        console.log(data);
-        if(data.success === false){
-            setErrorMessage("Create pin failed, try again");
-            setLoading(false);
+    React.useEffect(()=>{
+        if(!email){
+            router.replace("/auth/register");
         }
-        if(data.success === true){
-            setSuccessMassage(true);
+    },[email, router]);
+
+    const doCreatePin = async(e)=>{
+        try {
+            e.preventDefault();
+
+            setErrorMessage("");
+            setSuccessMassage("");
+            setLoading(true);
+
+            const form = new URLSearchParams({
+                email,
+                pin
+            }).toString();
+
+            const {data} = await http().post("/auth/set-pin", form);
+            console.log(data);
+            if(data.success === false){
+                setErrorMessage("Create pin failed, try again");
+                setLoading(false);
+            }
+            if(data.success === true){
+                setSuccessMassage(true);
+                setLoading(false);
+                setTimeout(() => {
+                    router.replace("auth/login");
+                }, 1000);
+                
+            }
+        } catch (error) {
+            const message = error?.response?.data.message;
+            if(message?.includes("Internal")){
+                setErrorMessage("Internal Server Error");
+            }
+        }
+        finally{
             setLoading(false);
-            router.replace("auth/login");
         }
     };
     return (
@@ -68,7 +86,7 @@ function CreatePin() {
                     </div>
                 </div>
                 <div className='flex-1 px-[8%] py-24'>
-                    <form className='flex flex-col gap-16 w-full'>
+                    <form onSubmit={doCreatePin} className='flex flex-col gap-16 w-full'>
                         <div className='flex flex-col gap-10 w-full'>
                             <div className='lg:hidden flex font-bold text-2xl text-primary'><SiMoneygram size={35}/><span className='text-3xl text-accent'>ZI</span>Pay</div>
                             {successMessage && <BsCheckCircleFill className='text-success' size={60}/>}
@@ -81,29 +99,15 @@ function CreatePin() {
                             <div className='flex justify-between items-center'>
                                 <div className="flex flex-col gap-10 form-control w-full">
                                     {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
-                                    <div className='flex gap-3 justify-between items-center'>
-                                        <div className="relative flex flex-col form-control w-full">
-                                            <HiOutlineMail className="absolute left-2 top-2" size={26}/>
-                                            <input 
-                                                type="email" 
-                                                name= "email"
-                                                placeholder="Enter your email" 
-                                                className="border-b-2 outline-none h-12 border-primary bg-base-100 w-full px-12"
-                                                onChange={(e) => setEmail(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <PinInput onChangePin={setPinValue}/> 
+                                    <PinInput onChangePin={setPin}/> 
                                     <label className="label hidden">
                                         <span className="label-text-alt"></span>
                                     </label>
                                 </div>
                             </div>
                         </div>) : (<div> </div>)}
-                        {loading ? (<button className="btn btn-primary normal-case text-white"><span className="loading loading-spinner loading-sm"></span></button>) :
-                            (<button onClick={doCreatePin} className="btn w-full btn-primary normal-case text-white">Create</button>) }
-                        
-                        {successMessage && <Link href="/home" className="btn btn-primary normal-case text-white hidden">Go to Dasboard</Link> }
+                        {loading ? (<button className={`btn btn-primary normal-case text-white ${successMessage && "hidden"}`}><span className="loading loading-spinner loading-sm"></span></button>) :
+                            (<button className={`btn btn-primary normal-case text-white ${successMessage && "hidden"}`}>Create</button>) }
                     </form>
                 </div>
             </div>

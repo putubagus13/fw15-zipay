@@ -16,6 +16,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { saveEmail } from "@/redux/reducers/auth";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -39,47 +41,40 @@ export const getServerSideProps = withIronSessionSsr(
 
 const validationSchema = Yup.object({
     username: Yup.string().required("Username is invalid").min(3, "Must have at least 3 characters"),
-    firstName: Yup.string().required("Firstname is invalid").min(3, "First name must have at least 3 characters"),
-    lastName: Yup.string().required("Lastname is invalid").min(3, "First name must have at least 3 characters"),
     email: Yup.string().email("Email is invalid").required("Email is invalid"),
     password: Yup.string().min(8, "must have input 8 characters").required("Password is invalid")
 });
 
 function Register() {
+    const dispatch = useDispatch();
     const router = useRouter();
     const [loading, setLoading] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
     const [showEye, setShoweEye] = React.useState(false);
 
     const doRegister = async(values)=>{
-        setLoading(true);
-        const fullName = values.firstName + " " + values.lastName;
-        
-        const form = new URLSearchParams({
-            username: values.username,
-            email: values.email, 
-            password: values.password
-        }).toString();
+        try {
+            setLoading(true);
+            setErrorMessage("");
+            const form = new URLSearchParams({
+                username: values.username,
+                email: values.email, 
+                password: values.password
+            }).toString();
 
-        const formProfile = new FormData();
-        formProfile.append("fullName", fullName);
+            const {data} = await axios.post("http://localhost:3000/api/register", form);
+            console.log(data);
 
-        const {data} = await axios.post("http://localhost:3000/api/register", form);
-        console.log(data);
+            if(data.success === true){
+                dispatch(saveEmail(values.email));
+                router.push("/auth/create-pin");
+            }
+            const message = data.message;
+            if(message?.includes("duplicate")){
+                setErrorMessage("Email already used");
+            }
 
-        if(data.success === false){
-            setErrorMessage("Registration Failed");
-            setLoading(false);
-        }
-
-        if(data.success === true){
-            const profileData = await axios.patch("https://cute-lime-goldfish-toga.cyclic.app/profile", formProfile, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${data.results.token}`
-                }
-            } );
-            router.push("/auth/login");
+        }finally{
             setLoading(false);
         }
     };
@@ -114,8 +109,6 @@ function Register() {
                             initialValues={{ 
                                 username: "",
                                 email: "",
-                                firstName: "",
-                                lastName: "", 
                                 password: "" }}
                             validationSchema = {validationSchema}
                             onSubmit={doRegister}
@@ -135,44 +128,6 @@ function Register() {
                                     <p className='text-secondary'>Transfering money is eassier than ever, you can access ZiPay wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!</p>
                                     {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
                                     <div className='w-full flex flex-col gap-6'>
-                                        <div className='flex gap-3 justify-between items-center'>
-                                            <div className="relative flex flex-col form-control w-full">
-                                                <AiOutlineUser className={`absolute left-2 top-2 ${errors.firstName && touched.firstName && "text-error"}`} size={26}/>
-                                                <input 
-                                                    type="text" 
-                                                    name= "firstName"
-                                                    placeholder="Enter your firstname" 
-                                                    className={`border-b-2 outline-none h-12 ${errors.firstName && touched.firstName ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
-                                                    value={values.firstName}
-                                                />
-                                                {errors.firstName && touched.firstName && (
-                                                    <label className="label">
-                                                        <span className="label-text-alt text-error">{errors.firstName}</span>
-                                                    </label>)
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className='flex gap-3 justify-between items-center'>
-                                            <div className="relative flex flex-col form-control w-full">
-                                                <AiOutlineUser className={`absolute left-2 top-2 ${errors.lastName && touched.lastName && "text-error"}`} size={26}/>
-                                                <input 
-                                                    type="text" 
-                                                    name= "lastName"
-                                                    placeholder="Enter your lastname" 
-                                                    className={`border-b-2 outline-none h-12 ${errors.lastName && touched.lastName ? ("border-error") : ("border-primary")} bg-base-100 w-full px-12`}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
-                                                    value={values.lastName}
-                                                />
-                                                {errors.lastName && touched.lastName && (
-                                                    <label className="label">
-                                                        <span className="label-text-alt text-error">{errors.lastName}</span>
-                                                    </label>)
-                                                }
-                                            </div>
-                                        </div>
                                         <div className='flex gap-3 justify-between items-center'>
                                             <div className="relative flex flex-col form-control w-full">
                                                 <AiOutlineUser className={`absolute left-2 top-2 ${errors.username && touched.username && "text-error"}`} size={26}/>
