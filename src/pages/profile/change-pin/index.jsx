@@ -3,6 +3,8 @@ import Head from "next/head";
 import {MdOutlineLogout} from "react-icons/md";
 import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
+import {BsCheckCircleFill} from "react-icons/bs";
+import {MdError} from "react-icons/md";
 import Link from "next/link";
 
 import { withIronSessionSsr } from "iron-session/next";
@@ -10,6 +12,8 @@ import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
+import PinInput from "@/components/PinInput";
+import http from "@/helpers/http";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -35,10 +39,42 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 function ChangePin({token}) {
+    const [pin, setPin] = React.useState("");
+    const [successMessage, setSuccessMassage] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+    console.log(pin);
+
     const router = useRouter();
     const doLogout = async()=>{
         await axios.get("/api/logout");
         router.replace("/auth/login");
+    };
+
+    const doChangePin = async(e)=>{
+        try {
+            e.preventDefault();
+            const form = new URLSearchParams({
+                pin
+            }).toString();
+
+            if(pin.length === 6){
+                console.log("test");
+                const {data} = await http(token).patch("/profile/change-pin", form);
+                console.log(data);
+                if(data.success === true){
+                    setSuccessMassage(true);
+                    setPin("");
+                }
+            }else{
+                console.log("testeror");
+                setErrorMessage("Pin must be 6 digits");
+            }
+        } catch (error) {
+            const message = error?.response?.data?.message;
+            if(message?.includes("Internal")){
+                setErrorMessage("Internal Server Error");
+            }
+        }
     };
 
     return (
@@ -104,15 +140,10 @@ function ChangePin({token}) {
                     <div>
                         <p className="pr-[20%] md:pr-[50%]">Enter your current 6 digits Fazzpay PIN below to continue to the next steps.</p>
                     </div>
-                    <form className="w-full flex flex-col gap-12 px-[10%] md:px-[30%] py-10 justify-center">
-                        <div className='flex gap-2 sm:gap-4 w-full justify-center'>
-                            <input type="text" className="input input-bordered w-11 sm:w-12 h-12 sm:h-16 font-[500] text-md sm:text-2xl" />
-                            <input type="text" className="input input-bordered w-11 sm:w-12 h-12 sm:h-16 font-[500] text-md sm:text-2xl" />
-                            <input type="text" className="input input-bordered w-11 sm:w-12 h-12 sm:h-16 font-[500] text-md sm:text-2xl" />
-                            <input type="text" className="input input-bordered w-11 sm:w-12 h-12 sm:h-16 font-[500] text-md sm:text-2xl" />
-                            <input type="text" className="input input-bordered w-11 sm:w-12 h-12 sm:h-16 font-[500] text-md sm:text-2xl" />
-                            <input type="text" className="input input-bordered w-11 sm:w-12 h-12 sm:h-16 font-[500] text-md sm:text-2xl" />
-                        </div>
+                    <form onSubmit={doChangePin} className="w-full flex flex-col gap-12 px-[10%] md:px-[30%] py-10 justify-center">
+                        {successMessage && <BsCheckCircleFill className='text-success' size={60}/>}
+                        {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
+                        <PinInput onChangePin={setPin} />
                         <button type="submit" className="btn btn-accent hover:btn-primary w-full normal-case">Change PIN</button>
                     </form>
                 </div>
