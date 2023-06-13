@@ -38,41 +38,101 @@ export const getServerSideProps = withIronSessionSsr(
     coockieConfig
 );
 
-function ChangePin({token}) {
-    const [pin, setPin] = React.useState("");
-    const [successMessage, setSuccessMassage] = React.useState(false);
-    const [errorMessage, setErrorMessage] = React.useState("");
-    console.log(pin);
+function ChangePin({ token }) {
+    const [oldPin, setOldPin] = React.useState("");
+    const [newPin, setNewPin] = React.useState("");
+    const [confirmPin, setConfirmPin] = React.useState("");
+    const [showFormOld, setShowFormOld] = React.useState(true);
+    const [showFormNew, setShowFormNew] = React.useState(false);
+    const [showFormCnfr, setShowFormCnfr] = React.useState(false);
 
+    const [successMessage, setSuccessMessage] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+  
     const router = useRouter();
-    const doLogout = async()=>{
+  
+    const doLogout = async () => {
         await axios.get("/api/logout");
         router.replace("/auth/login");
     };
-
-    const doChangePin = async(e)=>{
-        try {
-            e.preventDefault();
-            const form = new URLSearchParams({
-                pin,
-            }).toString();
-
-            if(pin.length === 6){
-                const {data} = await http(token).patch("/profile/change-pin", form);
-                console.log(data);
-                if(data.success === true){
-                    setSuccessMassage(true);
-                    setPin("");
-                }
-            }else{
-                setErrorMessage("Pin must be 6 digits");
-            }
-        } catch (error) {
-            const message = error?.response?.data?.message;
-            if(message?.includes("Internal")){
-                setErrorMessage("Internal Server Error");
-            }
+  
+    const doOldPin = () => {
+        setErrorMessage("");
+        if (oldPin.length === 6) {
+            setShowFormOld(false);
+            setShowFormNew(true);
+            console.log("oldPin :" + oldPin);
+        } else {
+            setErrorMessage("Pin must be 6 digits");
         }
+    };
+  
+    const doNewPin = () => {
+        setErrorMessage("");
+        if (newPin.length === 6) {
+            setShowFormNew(false);
+            setShowFormCnfr(true);
+            console.log("newPin :" + newPin);
+        } else {
+            setErrorMessage("Pin must be 6 digits");
+        }
+    };
+  
+    const doChangePin = async () => {
+        setErrorMessage("");
+        if(newPin === oldPin){
+            setErrorMessage("Pin must be different from the old pin");
+            setShowFormOld(true);
+            setShowFormNew(false);
+            setShowFormCnfr(false);
+            setOldPin("");
+            setNewPin("");
+            setConfirmPin("");
+        }
+        if(newPin !== confirmPin){
+            setErrorMessage("Confirm Pin does not match");
+        }
+        else if (newPin.length === 6 && newPin !== oldPin ) {
+            console.log("confirm :" + confirmPin);
+            const form = new URLSearchParams({
+                oldPin: oldPin,
+                newPin: newPin,
+                confirmPin: confirmPin
+            }).toString();
+  
+            try {
+                const { data } = await http(token).patch("/profile/change-pin", form);
+                console.log(data);
+                if (data) {
+                    setSuccessMessage(true);
+                    setShowFormNew(false);
+                    setShowFormCnfr(false);
+                    setShowFormOld(true);
+                    setOldPin("");
+                    setNewPin("");
+                    setConfirmPin("");
+                }
+            } catch (error) {
+                setErrorMessage("An error occurred. Please try again.");
+            }
+        } else if(confirmPin.length < 6 ){
+            setErrorMessage("Pin must be 6 digits");
+        }
+    };
+  
+    const handleSubmitOldPin = (e) => {
+        e.preventDefault();
+        doOldPin();
+    };
+  
+    const handleSubmitNewPin = (e) => {
+        e.preventDefault();
+        doNewPin();
+    };
+  
+    const handleSubmitChangePin = (e) => {
+        e.preventDefault();
+        doChangePin();
     };
 
     return (
@@ -138,12 +198,33 @@ function ChangePin({token}) {
                     <div>
                         <p className="pr-[20%] md:pr-[50%]">Enter your current 6 digits Fazzpay PIN below to continue to the next steps.</p>
                     </div>
-                    <form onSubmit={doChangePin} className="w-full flex flex-col gap-12 px-[10%] md:px-[30%] py-10 justify-center">
+                    {showFormOld && <form 
+                        onSubmit={handleSubmitOldPin} 
+                        className="w-full flex flex-col gap-12 px-[10%] md:px-[30%] items-center py-10 justify-center"
+                    >
                         {successMessage && <BsCheckCircleFill className='text-success' size={60}/>}
                         {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
-                        <PinInput onChangePin={setPin} />
-                        <button type="submit" className="btn btn-accent hover:btn-primary w-full normal-case">Change PIN</button>
-                    </form>
+                        <PinInput onChangePin={setOldPin}/>
+                        <button type="submit" className="btn btn-accent hover:btn-primary w-full normal-case">Old PIN</button>
+                    </form>}
+                    {showFormNew && <form 
+                        onSubmit={handleSubmitNewPin} 
+                        className="w-full flex flex-col gap-12 px-[10%] md:px-[30%] py-10 justify-center"
+                    >
+                        {successMessage && <BsCheckCircleFill className='text-success' size={60}/>}
+                        {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
+                        <PinInput onChangePin={setNewPin}/>
+                        <button type="submit" className="btn btn-accent hover:btn-primary w-full normal-case">New PIN</button>
+                    </form>}
+                    {showFormCnfr && <form 
+                        onSubmit={handleSubmitChangePin} 
+                        className="w-full flex flex-col gap-12 px-[10%] md:px-[30%] py-10 justify-center"
+                    >
+                        {successMessage && <BsCheckCircleFill className='text-success' size={60}/>}
+                        {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg"><MdError size={30}/>{errorMessage}</div>)}
+                        <PinInput onChangePin={setConfirmPin}/>
+                        <button type="submit" className="btn btn-accent hover:btn-primary w-full normal-case">Confirm PIN</button>
+                    </form>}
                 </div>
             </div>
             <footer className="flex flex-col md:flex-row gap-6 justify-between bg-secondary px-[8%] py-6">
