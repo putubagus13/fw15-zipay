@@ -11,21 +11,42 @@ import PinInput from "@/components/PinInput";
 
 import { useRouter } from "next/router";
 import http from "@/helpers/http";
-import { useSelector } from "react-redux";
 
-function CreatePin() {
-    const email = useSelector(state => state.auth.email);
+import { withIronSessionSsr } from "iron-session/next";
+import coockieConfig from "@/helpers/cookieConfig";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token;
+
+        if(!token) {
+            res.setHeader("location", "/auth/login");
+            res.statusCode = 302;
+            res.end();
+            return {
+                prop: {}
+            };
+        }
+        const {data} = await http(token).get("/profile");
+        
+        return {
+            props: {
+                token,
+                user: data.results
+            },
+        };
+        
+    },
+    coockieConfig
+);
+
+function CreatePin({user}) {
+    const email = user.email;
     const router = useRouter();
     const [pin, setPin] = React.useState(0);
     const [loading, setLoading] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("");
     const [successMessage, setSuccessMassage] = React.useState(false);
-
-    React.useEffect(()=>{
-        if(!email){
-            router.replace("/auth/register");
-        }
-    },[email, router]);
 
     const doCreatePin = async(e)=>{
         try {
@@ -50,7 +71,7 @@ function CreatePin() {
                 setSuccessMassage(true);
                 setLoading(false);
                 setTimeout(() => {
-                    router.replace("/auth/login");
+                    router.push("/auth/login");
                 }, 1000);
                 
             }
