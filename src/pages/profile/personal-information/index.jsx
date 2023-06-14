@@ -10,6 +10,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import UpdateProfile from "@/components/UpdateProfile";
+import { useSelector } from "react-redux";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -24,16 +25,10 @@ export const getServerSideProps = withIronSessionSsr(
                 prop: {}
             };
         }
-        const {data} = await axios.get("https://cute-lime-goldfish-toga.cyclic.app/profile", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
         
         return {
             props: {
-                token,
-                user: data.results
+                token
             },
         };
         
@@ -41,7 +36,8 @@ export const getServerSideProps = withIronSessionSsr(
     coockieConfig
 );
 
-function PersonalInformation({token, user}) {
+function PersonalInformation({token}) {
+    const user = useSelector(state => state.profile.data);
     const [edit, setEdit] = React.useState(false);
     const fullname = user?.fullName;
     let nameLength;
