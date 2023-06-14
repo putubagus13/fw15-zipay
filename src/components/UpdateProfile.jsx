@@ -5,6 +5,8 @@ import http from "@/helpers/http";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import {MdError} from "react-icons/md";
+import { useDispatch } from "react-redux";
+import { setProfile } from "@/redux/reducers/profile";
 
 const validationSchema = Yup.object({
     email: Yup.string().email("Email is invalid"),
@@ -13,6 +15,7 @@ const validationSchema = Yup.object({
 });
 
 function UpdateProfile(props) {
+    const dispatch = useDispatch();
     const { token, onSave } = props;
     const [errorMessage, setErrorMessage]= React.useState("");
     const [successMessage, setSuccessMassage] = React.useState(true);
@@ -36,9 +39,8 @@ function UpdateProfile(props) {
         formData.append("email", values.email);
 
         const {data} = await http(token).patch("/profile", formData);
-        console.log(data);
         if(data.results){
-            console.log("berhasil");
+            dispatch(setProfile(data.results));
             setSuccessMassage(false);
         }
         
