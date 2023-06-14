@@ -1,12 +1,10 @@
 import React from "react";
 import Head from "next/head";
-import {SiMoneygram} from "react-icons/si";
 import Image from "next/image";
-import Icon from "../../assets/pexels-pixabay-220453.jpg";
-import {MdNotificationsNone, MdOutlineLogout} from "react-icons/md";
+import User from "@/assets/user.png";
+import {MdOutlineLogout} from "react-icons/md";
 import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser} from "react-icons/ai";
-import {FiMenu} from "react-icons/fi";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -14,6 +12,8 @@ import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import Header from "@/components/Header";
+import http from "@/helpers/http";
+import { useSelector } from "react-redux";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -39,6 +39,29 @@ export const getServerSideProps = withIronSessionSsr(
 
 function History({token}) {
     const router = useRouter();
+    const profile = useSelector(state =>state.profile.data);
+    const [page, setPage] = React.useState({});
+    const [sort, setSort] = React.useState("");
+
+    const [transaction, setTransaction] = React.useState([]);
+    const dataTrs = React.useCallback(async(page=1, sort="ASC")=>{
+        const {data} = await http(token).get("/transactions", {params: {
+            page,
+            sort,
+            limit: 6}});
+        setTransaction(data.results);
+        setPage(data.pageInfo);
+    }, [token]);
+
+    React.useEffect(()=>{
+        dataTrs();
+    }, [dataTrs]);
+
+    React.useEffect(()=>{
+        dataTrs(1, sort );
+
+    }, [sort, dataTrs]);
+
     const doLogout = async()=>{
         await axios.get("/api/logout");
         router.replace("/auth/login");
@@ -106,96 +129,83 @@ function History({token}) {
                             <label tabIndex={0} className="btn m-1 normal-case rounded-2xl">-Select Filter-</label>
                             <ul tabIndex={0} className="dropdown-content menu flex flex-col items-center gap-2 p-2 shadow bg-base-100 rounded-box w-52">
                                 <button>Name</button>
-                                <button className="font-bold">A-Z</button>
-                                <button className="font-bold">Z-A</button>
+                                <button onClick={()=> setSort("ASC")} className="btn w-full font-bold">A-Z</button>
+                                <button onClick={()=> setSort("DSC")}className="btn w-full font-bold">Z-A</button>
                                 <button>Last Transaction</button>
                             </ul>
                         </div>
                     </div>
                     <div className="flex flex-col gap-10">
-                        <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                                <Link href="/profile/:id" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <Link href="/history/:id" className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Hendri</label>
-                                    <label className="text-xl">Accept</label>
-                                </Link>
-                            </div>
-                            <div>
-                                <label className="font-bold text-2xl text-success">+Rp<span>13.000.000</span></label>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                                <Link href="/profile/:id" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <Link href="/history/:id" className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Hendri</label>
-                                    <label className="text-xl">Accept</label>
-                                </Link>
-                            </div>
-                            <div>
-                                <label className="font-bold text-2xl text-success">+Rp<span>13.000.000</span></label>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                                <Link href="/profile/:id" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <Link href="/history/:id" className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Hendri</label>
-                                    <label className="text-xl">Accept</label>
-                                </Link>
-                            </div>
-                            <div>
-                                <label className="font-bold text-2xl text-success">+Rp<span>13.000.000</span></label>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                                <Link href="/profile/:id" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <Link href="/history/:id" className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Hendri</label>
-                                    <label className="text-xl">Accept</label>
-                                </Link>
-                            </div>
-                            <div>
-                                <label className="font-bold text-2xl text-success">+Rp<span>13.000.000</span></label>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                                <Link href="/profile/:id" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <Link href="/history/:id" className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Hendri</label>
-                                    <label className="text-xl">Accept</label>
-                                </Link>
-                            </div>
-                            <div>
-                                <label className="font-bold text-2xl text-success">+Rp<span>13.000.000</span></label>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                                <Link href="/profile/:id" className="w-16 h-16 overflow-hidden rounded-2xl">
-                                    <Image className="object-cover" src={Icon} alt=""/>
-                                </Link>
-                                <Link href="/history/:id" className="flex flex-col gap-1">
-                                    <label className="font-bold text-xl">Hendri</label>
-                                    <label className="text-xl">Accept</label>
-                                </Link>
-                            </div>
-                            <div>
-                                <label className="font-bold text-2xl text-success">+Rp<span>13.000.000</span></label>
-                            </div>
+                        {transaction.map(items => {
+                            return(
+                                <div key={`transaction${items.id}`} className="flex justify-between items-center">
+                                    {items.type === "TOP-UP" && 
+                                            <>
+                                                <div className="flex gap-3">
+                                                    <div className="w-16 h-16 overflow-hidden rounded-2xl">
+                                                        <Link href="" className="w-16 h-16 overflow-hidden rounded-2xl">
+                                                            {items.recipient.picture ? (<Image width={150} height={150} className="object-fit" src={items.recipient.picture} alt="userImage"/>) 
+                                                                : (<Image className="object-fit" src={User} alt="user"/>) }
+                                                        </Link>
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        <label className="font-bold text-xl">{items.recipient.fullName || items.recipient.email}</label>
+                                                        <label className="text-xl">Top-Up</label>
+                                                    </div>
+                                                </div>
+                                            </>}
+                                    {items.type === "TRANSFER" && 
+                                            <>
+                                                {items.recipient.id !== profile.id && 
+                                                <>
+                                                    <div className="flex gap-3">
+                                                        <div className="w-16 h-16 overflow-hidden rounded-2xl">
+                                                            <Link href="" className="w-16 h-16 overflow-hidden rounded-2xl">
+                                                                {items.recipient.picture ? (<Image width={150} height={150} className="object-fit" src={items.recipient.picture} alt="userImage"/>) 
+                                                                    : (<Image className="object-fit" src={User} alt="user"/>) }
+                                                            </Link>
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="font-bold text-xl">{items.recipient.fullName || items.recipient.email}</label>
+                                                            <label className="text-xl">Outcome</label>
+                                                        </div>
+                                                    </div>
+                                                </>}
+                                                {items.recipient.id === profile.id && 
+                                                <>
+                                                    <div className="flex gap-3">
+                                                        <div className="w-16 h-16 overflow-hidden rounded-2xl">
+                                                            <Link href="" className="w-16 h-16 overflow-hidden rounded-2xl">
+                                                                {items.sender.picture ? (<Image width={150} height={150} className="object-fit" src={items.sender.picture} alt="userImage"/>) 
+                                                                    : (<Image className="object-fit" src={User} alt="user"/>) }
+                                                            </Link>
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <label className="font-bold text-xl">{items.sender.fullName || items.sender.email}</label>
+                                                            <label className="text-xl">Income</label>
+                                                        </div>
+                                                    </div>
+                                                </>}
+                                            </>}
+                                    {items.type === "TOP-UP" && 
+                                            <div>
+                                                <label className="font-bold text-2xl text-success">+{items.amount && `Rp${Number(items.amount).toLocaleString("id")}`}</label>
+                                            </div>}
+                                    {items.type === "TRANSFER" && (items.recipient.id === profile.id ? 
+                                        (<div>
+                                            <label className="font-bold text-success text-2xl text-success">+{items.amount && `Rp${Number(items.amount).toLocaleString("id")}`}</label>
+                                        </div>) : 
+                                        (<div>
+                                            <label className="font-bold text-error text-2xl">-{items.amount && `Rp${Number(items.amount).toLocaleString("id")}`}</label>
+                                        </div>))
+                                    }
+                                </div>
+                            );
+                        })}
+                        <div className="flex gap-6 justify-center w-full">
+                            <button onClick={()=> dataTrs(page.page - 1, sort)} disabled={page.page <= 1} className="btn btn-secondary shadow-md normal-case">Prev</button>
+                            <label className="flex justify-center items-center font-[500] text-md text-secondary">{page.page} of {page.totalPage}</label>
+                            <button onClick={()=> dataTrs(page.page + 1, sort)} disabled={page.page === page.totalPage} className="btn btn-secondary shadow-md normal-case">Next</button>
                         </div>
                     </div>
                 </div>
