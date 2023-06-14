@@ -1,23 +1,23 @@
 import React from "react";
 import Head from "next/head";
 import Image from "next/image";
-import Zipay from "../assets/ZiPay1.png";
-import phone from "../assets/png-phone.png";
-import phone1 from "../assets/png-phone2.png";
+import Zipay from "@/assets/ZiPay1.png";
+import phone from "@/assets/png-phone.png";
+import phone1 from "@/assets/png-phone2.png";
 import {SiMoneygram} from "react-icons/si";
 import {HiPhone} from "react-icons/hi";
 import {RiLockPasswordLine} from "react-icons/ri";
 import {FiDownload, FiMenu} from "react-icons/fi";
-import Cannon from "../assets/cannon.png";
-import Dropbox from "../assets/dropbox.png";
-import Hnm from "../assets/h&m.png";
-import Microsoft from "../assets/microsoft.png";
-import Airbnb from "../assets/airbnb.png";
-import Dell from "../assets/dell.png";
+import Cannon from "@/assets/cannon.png";
+import Dropbox from "@/assets/dropbox.png";
+import Hnm from "@/assets/h&m.png";
+import Microsoft from "@/assets/microsoft.png";
+import Airbnb from "@/assets/airbnb.png";
+import Dell from "@/assets/dell.png";
 import Link from "next/link";
-import Icon from "../assets/pexels-apex-4041013.jpg";
-import Icon1 from "../assets/pexels-jack-winbow-1559486.jpg";
-import Icon2 from "../assets/pexels-pixabay-220453.jpg";
+import Icon from "@/assets/pexels-apex-4041013.jpg";
+import Icon1 from "@/assets/pexels-jack-winbow-1559486.jpg";
+import Icon2 from "@/assets/pexels-pixabay-220453.jpg";
 
 export default function Home() {
     return (
