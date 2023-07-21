@@ -172,7 +172,7 @@ function Homepage({token}) {
                         </div>
                         <div className="flex flex-col gap-3">
                             <Link href="/transfer" className="btn btn-accent flex gap-2 normal-case"><AiOutlineArrowUp size={25}/>Transfer</Link>
-                            <Link href="/topup" className="btn btn-accent flex gap-2 normal-case"><AiOutlinePlus size={25}/>Top Up</Link>
+                            <label onClick={()=>window.my_modal_1.showModal()} className="btn btn-accent flex gap-2 normal-case"><AiOutlinePlus size={25}/>Top Up</label>
                         </div>
                     </div>
                     <div className="flex flex-col lg:flex-row gap-10">
