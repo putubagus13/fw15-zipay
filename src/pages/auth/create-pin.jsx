@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Zipay from "@/assets/ZiPay.png";
+import Zipay from "@/assets/Zipay.png";
 import Phone from "@/assets/phone.png";
 import {SiMoneygram} from "react-icons/si";
 import {BsCheckCircleFill} from "react-icons/bs";

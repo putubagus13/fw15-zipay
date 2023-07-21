@@ -15,6 +15,7 @@ import coockieConfig from "@/helpers/cookieConfig";
 import axios from "axios";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
+import http from "@/helpers/http";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -71,12 +72,11 @@ function ChangePassword({token}) {
             confirmPassword: values.confirmPassword
         }).toString();
 
-        const {data} = await axios.patch("https://cute-lime-goldfish-toga.cyclic.app/profile/change-password", form, {
+        const {data} = await http(token).patch("/profile/change-password", form, {
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: `Bearer ${token}`
-            }
-        });
+                "Content-Type": "multipart/form-data",
+            }});
+            
         console.log(data.success);
         if(data.success === false){
             setErrorMessage("Old password is wrong");
