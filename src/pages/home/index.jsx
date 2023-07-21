@@ -7,6 +7,7 @@ import {LuLayoutDashboard} from "react-icons/lu";
 import {AiOutlineArrowUp, AiOutlinePlus, AiOutlineUser, AiOutlineArrowDown} from "react-icons/ai";
 import Link from "next/link";
 import User from "@/assets/user.png";
+import { setTransactionHistory } from "@/redux/reducers/transaction";
 
 import { withIronSessionSsr } from "iron-session/next";
 import coockieConfig from "@/helpers/cookieConfig";
@@ -29,16 +30,10 @@ export const getServerSideProps = withIronSessionSsr(
                 prop: {}
             };
         }
-        const {data} = await axios.get("https://cute-lime-goldfish-toga.cyclic.app/profile", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
         
         return {
             props: {
                 token,
-                user: data.results
             },
         };
         
@@ -58,6 +53,7 @@ function Homepage({token}) {
     const dataTrs = React.useCallback(async()=>{
         const {data} = await http(token).get("/transactions", {params: {limit: 4}});
         setTransaction(data.results);
+        dispatch(setTransactionHistory(data.results));
     }, [token]);
 
     React.useEffect(()=>{
@@ -73,10 +69,16 @@ function Homepage({token}) {
             });
             const {data} = await http(token).post("/transactions/topup", form);
             console.log(data.results);
+            const history = await http(token).get("/transactions", {params: {limit: 4}});
+            console.log(history);
+            setTransaction(history.data.results);
+            dispatch(setTransactionHistory(history.data.results));
+
             if(data.results){
                 dispatch(setProfile(data.results));
                 setSuccessMessage(true);
             }
+
             
         } catch (error) {
             return setErrorMessage("Top-UP failed, try again");

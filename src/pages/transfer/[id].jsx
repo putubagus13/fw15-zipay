@@ -46,7 +46,6 @@ function Success({token}) {
     const [dataRecipient, setDataRecipient] = React.useState({});
     const [dataPicture, setDataPicture] = React.useState({});
     const router = useRouter();
-    const balanceLeft = profile.balance - dataRecipient.amount;
 
     const getDataStatus = React.useCallback(async()=>{
         const {data} = await http(token).get("/transactions/"+id);
@@ -147,7 +146,7 @@ function Success({token}) {
                             <div className="flex items-center shadow-lg p-4 rounded-xl">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-md">Balance Left</label>
-                                    <label className="font-[500] text-2xl">{balanceLeft && `Rp${Number(balanceLeft).toLocaleString("id")}`}</label>
+                                    <label className="font-[500] text-2xl">{profile.balance && `Rp${Number(profile.balance).toLocaleString("id")}`}</label>
                                 </div>
                             </div>
                             <div className="flex items-center shadow-lg p-4 rounded-xl">
@@ -179,8 +178,8 @@ function Success({token}) {
                         </div>
 
                         {dataRecipient && <div className="flex gap-4 w-full h-16 justify-center lg:justify-end">
-                            <Link href="/home" className="btn btn-primary w-full h-full normal-case rounded-2xl text-xl">Back to Home</Link>
-                            <button className="btn btn-accent hover:btn-primary w-full h-full normal-case text-xl rounded-xl"><MdOutlineFileDownload size={25}/>Download PDF</button>
+                            <Link href="/home" className="btn btn-primary h-full normal-case rounded-2xl text-xl">Back to Home</Link>
+                            <button className="btn btn-accent hover:btn-primary h-full normal-case text-xl rounded-xl"><MdOutlineFileDownload size={25}/>Download PDF</button>
                         </div>}
 
                         {!dataRecipient && <div className="flex gap-4 w-full h-16 justify-center lg:justify-end">
