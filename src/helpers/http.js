@@ -7,7 +7,7 @@ const http = (token)=>{
     }
 
     const instance = axios.create({
-        baseURL: "https://outstanding-train-fawn.cyclic.app",
+        baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
         headers
     });
     return instance;
