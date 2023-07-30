@@ -50,7 +50,7 @@ function ForgotPassword() {
             email: values.email, 
         }).toString();
 
-        const {data} = await axios.post("http://localhost:3000/api/forgot-password", form);
+        const {data} = await axios.post("/api/forgot-password", form);
         console.log(data);
         if(data.message === "auth_forgot_already_requested"){
             setErrorMessage("Forgot password already requested");

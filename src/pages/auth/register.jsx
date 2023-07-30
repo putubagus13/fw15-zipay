@@ -62,7 +62,7 @@ function Register() {
                 password: values.password
             }).toString();
 
-            const {data} = await axios.post("http://localhost:3000/api/register", form);
+            const {data} = await axios.post("/api/register", form);
             console.log(data);
 
             if(data.success === true){
