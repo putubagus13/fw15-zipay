@@ -35,7 +35,7 @@ Jika Anda ingin menjalankan Zipay di lingkungan pengembangan lokal Anda, ikuti l
 1. Clone repositori ini:
 
    ```bash
-   git clone https://github.com/namarepo/zipay.git
+   git clone https://github.com/putubagus13/fw15-zipay.git
    cd zipay
    ```
 
