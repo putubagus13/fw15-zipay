@@ -1,4 +1,4 @@
-# Readme Zipay - Aplikasi E-Wallet Sederhana
+# Zipay - Aplikasi E-Wallet Sederhana
 
 
 Selamat datang di repositori aplikasi web Zipay! Ini adalah aplikasi e-wallet sederhana yang memungkinkan pengguna untuk melakukan transaksi sesama pengguna dengan cepat dan aman. Aplikasi ini dibangun menggunakan teknologi Next.js dengan implementasi Server-Side Rendering (SSR) untuk pengalaman pengguna yang lebih baik.
