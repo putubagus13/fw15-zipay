@@ -55,19 +55,8 @@ Jika Anda ingin menjalankan Zipay di lingkungan pengembangan lokal Anda, ikuti l
 
 5. Akses aplikasi di [http://localhost:3000](http://localhost:3000) dalam browser Anda.
 
-## Kontribusi
 
-Kami sangat terbuka terhadap kontribusi! Jika Anda ingin berkontribusi pada pengembangan Zipay, silakan buat _fork_ repositori ini dan kirim _pull request_ setelah melakukan perubahan yang dibutuhkan.
-
-## Laporan Masalah
-
-Jika Anda menemukan masalah atau bug dalam aplikasi, harap buat _issue_ di repositori ini atau hubungi tim pengembangan kami di [email@example.com](mailto:email@example.com).
-
-## Lisensi
-
-Aplikasi Zipay dilisensikan di bawah Lisensi MIT. Lihat berkas [LICENSE](LICENSE) untuk detailnya.
-
-Terima kasih telah menggunakan Zipay! Kami berharap Anda menikmati pengalaman bertransaksi dengan aplikasi kami.
+Terima kasih telah menggunakan Zipay!
 
 ---
-© 2023 Zipay. Dikembangkan oleh [Nama Perusahaan Anda](https://www.example.com).
+© 2023 Zipay. Dikembangkan oleh Putu Bagus Raditya.
