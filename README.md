@@ -11,7 +11,6 @@ Selamat datang di repositori aplikasi web Zipay! Ini adalah aplikasi e-wallet se
 
 - **Riwayat Transaksi**: Riwayat transaksi lengkap tersedia untuk pengguna sehingga mereka dapat melacak semua aktivitas keuangan mereka.
 
-- **Keamanan**: Kami menempatkan keamanan sebagai prioritas utama. Data pengguna dan transaksi dienkripsi dan dilindungi dengan baik.
 
 ## Teknologi Utama
 
